@@ -57,10 +57,7 @@ public class DroneControlService {
 
     public boolean loadMedication(String serial, MedicationDto medicationDto) {
         DroneEntity drone = droneRepository.findBySerial(serial);
-        if (!Optional.ofNullable(drone).isPresent()) {
-            DroneLogger.droneAbsent(serial);
-            return false;
-        }
+        if (isAbsentingDrone(serial, drone)) return false;
         DroneDto droneDto = DroneDto.from(drone);
         try {
             if (DroneCheckConditions.checkBattery(droneDto) && DroneCheckConditions.checkWeight(droneDto)) {
@@ -83,10 +80,7 @@ public class DroneControlService {
 
     public boolean loadWithMedicationsByNames(String serial, List<String> medicationNameList) {
         DroneEntity drone = droneRepository.findBySerial(serial);
-        if (!Optional.ofNullable(drone).isPresent()) {
-            DroneLogger.droneAbsent(serial);
-            return false;
-        }
+        if (isAbsentingDrone(serial, drone)) return false;
         DroneDto droneDto = DroneDto.from(drone);
         try {
             if (DroneCheckConditions.checkBattery(droneDto) && DroneCheckConditions.checkWeight(droneDto)) {
@@ -110,10 +104,7 @@ public class DroneControlService {
 
     public boolean load(String serial, List<MedicationDto> medicationList) {
         DroneEntity drone = droneRepository.findBySerial(serial);
-        if (!Optional.ofNullable(drone).isPresent()) {
-            DroneLogger.droneAbsent(serial);
-            return false;
-        }
+        if (isAbsentingDrone(serial, drone)) return false;
         drone.setMedicationEntityList(
                 medicationList.stream()
                         .map(MedicationEntity::from)
@@ -144,12 +135,12 @@ public class DroneControlService {
 
     public List<MedicationDto> getLoadedMedications(String serial) {
         try {
-            DroneEntity DroneEntity = droneRepository.findBySerial(serial);
-            if (!Optional.ofNullable(DroneEntity).isPresent()) {
+            DroneEntity droneEntity = droneRepository.findBySerial(serial);
+            if (!Optional.ofNullable(droneEntity).isPresent()) {
                 DroneLogger.droneAbsent(serial);
                 return new ArrayList<>();
             }
-            List<MedicationDto> medicationDtoList = DroneEntity.getMedicationEntityList().stream()
+            List<MedicationDto> medicationDtoList = droneEntity.getMedicationEntityList().stream()
                     .map(MedicationDto::from)
                     .collect(Collectors.toList());
             DroneLogger.loadedItemsInfoLog(medicationDtoList);
@@ -179,13 +170,21 @@ public class DroneControlService {
 
     public Integer checkDroneBattery(String serial) {
         try {
-            DroneEntity DroneEntity = droneRepository.findBySerial(serial);
-            if (Optional.ofNullable(DroneEntity).isPresent()) {
-                return DroneEntity.getBatteryCapacity();
+            DroneEntity droneEntity = droneRepository.findBySerial(serial);
+            if (Optional.ofNullable(droneEntity).isPresent()) {
+                return droneEntity.getBatteryCapacity();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return -1;
+    }
+
+    private boolean isAbsentingDrone(String serial, DroneEntity drone) {
+        if (!Optional.ofNullable(drone).isPresent()) {
+            DroneLogger.droneAbsent(serial);
+            return true;
+        }
+        return false;
     }
 }

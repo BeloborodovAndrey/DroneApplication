@@ -60,10 +60,10 @@ public class DroneControlController {
         return new ResponseEntity<>(droneControlService.loadWithMedicationsByNames(serial, medicationsList), HttpStatus.OK);
     }
 
-    @PutMapping("/medicationsLoad")
+    @PutMapping("/medicationsLoad/{serial}")
     public ResponseEntity<Boolean> loadMedications(
-            @RequestParam(name = "serial") String serial,
-            @RequestParam(name = "medicationsList") List<MedicationDto> medicationsList
+            @PathVariable("serial") String serial,
+            @RequestBody List<MedicationDto> medicationsList
     ) {
         return new ResponseEntity<>(droneControlService.load(serial, medicationsList), HttpStatus.OK);
     }

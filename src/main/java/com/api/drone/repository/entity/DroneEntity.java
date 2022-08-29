@@ -38,7 +38,7 @@ public class DroneEntity {
         DroneEntity droneEntity = new DroneEntity();
         droneEntity.setBatteryCapacity(droneDto.getBatteryCapacity());
         droneEntity.setModel(droneDto.getModel());
-        if (droneEntity.getMedicationEntityList() != null) {
+        if (droneDto.getMedicationDtoList() != null) {
             droneEntity.setMedicationEntityList(
                     droneDto.getMedicationDtoList().stream()
                             .map(MedicationEntity::from)

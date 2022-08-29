@@ -23,14 +23,14 @@ public class DroneDto {
 
     private List<MedicationDto> medicationDtoList;
 
-    public static DroneDto from(DroneEntity DroneEntity) {
+    public static DroneDto from(DroneEntity droneEntity) {
         return DroneDto.builder()
-                .state(DroneEntity.getState())
-                .batteryCapacity(DroneEntity.getBatteryCapacity())
-                .model(DroneEntity.getModel())
-                .serial(DroneEntity.getSerial())
+                .state(droneEntity.getState())
+                .batteryCapacity(droneEntity.getBatteryCapacity())
+                .model(droneEntity.getModel())
+                .serial(droneEntity.getSerial())
                 .medicationDtoList(
-                        DroneEntity.getMedicationEntityList().stream()
+                        droneEntity.getMedicationEntityList().stream()
                                 .map(MedicationDto::from)
                                 .collect(Collectors.toList())
                 ).build();
